@@ -1,26 +1,29 @@
 @page "/bode"
-@using Blazor.Extensions.Canvas
-@addTagHelper *, Blazor.Extensions.Canvas
+@using Excubo.Blazor.Canvas
 
 <h1>Bode</h1>
 
 <p>Bode</p>
 
-<BECanvas ref="@_canvasReference"></BECanvas>
+<Canvas @ref="helper_canvas" width="150px" height="300px" />
 
 @code {
-    private Canvas2DContext _context;
-
-    protected BECanvasComponent _canvasReference;
-
-    protected override async Task OnAfterRenderAsync(bool firstrender)
+    private Canvas helper_canvas;
+    private ElementReference normal_canvas;
+    protected override async Task OnAfterRenderAsync(bool first_render)
     {
-        this._context = await this._canvasReference.CreateCanvas2DAsync();
-        await this._context.SetFillStyleAsync("green");
-
-        await this._context.FillRectAsync(10, 100, 100, 100);
-
-        await this._context.SetFontAsync("48px serif");
-        await this._context.StrokeTextAsync("Hello Blazor!!!", 10, 100);
+        if (first_render)
+        {
+            await using (var ctx1 = await helper_canvas.GetContext2DAsync())
+            {
+                await ctx1.FontAsync("48px solid");
+                await ctx1.FillTextAsync("Hello", 0, 150);
+            }
+            //await using (var ctx2 = await js.GetContext2DAsync(normal_canvas))
+            //{
+            //    await ctx2.FontAsync("48px serif");
+            //    await ctx2.StrokeTextAsync("Excubo.Blazor.Canvas", 0, 150);
+            //}
+        }
     }
 }
